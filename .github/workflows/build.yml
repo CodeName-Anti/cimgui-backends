@@ -24,6 +24,14 @@ jobs:
         vulkan-components: Vulkan-Headers, Vulkan-Loader
         vulkan-use-cache: true
 
+    - name: Install SDL2
+      uses: libsdl-org/setup-sdl@main
+      id: sdl
+      with:
+        install-linux-dependencies: true
+        version: 2-latest
+        version-sdl-image: 2-latest
+
     - name: Install Dependencies
       shell: bash
       env:
@@ -72,9 +80,12 @@ jobs:
       run: |
         mkdir cmake-build
         cd cmake-build
-        echo $VCPKG_INSTALLATION_ROOT
         if [ "$GITHUB_OS" == "windows-latest" ];
         then
+          echo $VCPKG_INSTALLATION_ROOT
+          ls $VCPKG_INSTALLATION_ROOT
+          ls $VCPKG_INSTALLATION_ROOT\scripts
+          ls $VCPKG_INSTALLATION_ROOT\scripts\buildsystem
           cmake -DCIMGUI_TEST=1 .. -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake
         else
           cmake -DCIMGUI_TEST=1 ..
