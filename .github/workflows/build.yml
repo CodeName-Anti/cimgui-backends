@@ -68,6 +68,7 @@ jobs:
         fi
 
     - name: CMake
+      shell: bash
       run: |
         mkdir cmake-build
         cd cmake-build
