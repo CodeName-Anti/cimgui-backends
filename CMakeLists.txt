@@ -19,14 +19,50 @@ file(GLOB IMGUI_SOURCES
     imgui/imgui_demo.cpp
     imgui/imgui_widgets.cpp
 	${TABLES_SOURCE}
+	imgui/backends/imgui_impl_sdl2.cpp
+	imgui/backends/imgui_impl_sdlrenderer2.cpp
+	imgui/backends/imgui_impl_glfw.cpp
+	imgui/backends/imgui_impl_opengl2.cpp
+	imgui/backends/imgui_impl_opengl3.cpp
+	imgui/backends/imgui_impl_vulkan.cpp
 )
+
+set(IMGUI_LIBRARIES )
+if(CMAKE_SYSTEM MATCHES Windows)
+	list(APPEND IMGUI_SOURCES
+		imgui/backends/imgui_impl_win32.cpp
+		imgui/backends/imgui_impl_dx9.cpp
+		imgui/backends/imgui_impl_dx10.cpp
+		imgui/backends/imgui_impl_dx11.cpp
+		imgui/backends/imgui_impl_dx12.cpp
+	)
+	
+	list(APPEND IMGUI_LIBRARIES "dxgi.lib")
+endif()
+
+if(CMAKE_SYSTEM MATCHES Linux)
+	#add linux specific libraries/backends
+endif()
+
+
+find_package(SDL2 REQUIRED)
+list(APPEND IMGUI_LIBRARIES ${SDL2_LIBRARIES})
+
+find_package(glfw3 REQUIRED)
+list(APPEND IMGUI_LIBRARIES glfw)
+
+set(OpenGL_GL_PREFERENCE LEGACY)
+find_package(OpenGL REQUIRED)
+list(APPEND IMGUI_LIBRARIES OpenGL::GL)
+
+find_package(Vulkan REQUIRED)
+list(APPEND IMGUI_LIBRARIES Vulkan::Vulkan)
 
 set(IMGUI_STATIC "no" CACHE STRING "Build as a static library")
 set(IMGUI_FREETYPE "no" CACHE STRING "Build with freetype library")
-set(IMGUI_LIBRARIES )
 
 if(IMGUI_FREETYPE)
-	FIND_PACKAGE(freetype REQUIRED PATHS ${FREETYPE_PATH})
+	find_package(freetype REQUIRED PATHS ${FREETYPE_PATH})
 	list(APPEND IMGUI_LIBRARIES freetype)
 	list(APPEND IMGUI_SOURCES imgui/misc/freetype/imgui_freetype.cpp)
 	add_definitions("-DCIMGUI_FREETYPE=1")
@@ -51,6 +87,8 @@ target_include_directories(cimgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(cimgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 set_target_properties(cimgui PROPERTIES PREFIX "")
 target_link_libraries(cimgui ${IMGUI_LIBRARIES})
+target_include_directories(cimgui PUBLIC ${SDL2_INCLUDE_DIRS})
+target_include_directories(cimgui PUBLIC ${glfw3_INCLUDE_DIR})
 
 #install
 install(TARGETS cimgui

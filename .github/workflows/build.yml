@@ -3,6 +3,7 @@ name: Build
 on:
   push: {}
   pull_request: {}
+  workflow_dispatch: {}
   schedule:
     - cron:  '0 9 * * 1'
 
@@ -23,13 +24,13 @@ jobs:
       run: |
         if [ "$GITHUB_OS" == "macOS-latest" ];
         then
-          brew install luajit
+          brew install luajit sdl2 glfw vulkan-headers
         elif [ "$GITHUB_OS" == "ubuntu-latest" ];
         then
-          sudo apt-get install -y luajit
+          sudo apt-get install -y luajit libsdl2-dev libglfw3-dev libvulkan-dev
         elif [ "$GITHUB_OS" == "windows-latest" ];
         then
-          vcpkg install luajit:x64-windows
+          vcpkg install luajit:x64-windows sdl2:x64-windows glfw3:x64-windows vulkan:x64-windows
           echo "/C/vcpkg/installed/x64-windows/tools/luajit" >> $GITHUB_PATH
           echo "/C/vcpkg/installed/x64-windows/bin"   >> $GITHUB_PATH
         fi
@@ -48,15 +49,27 @@ jobs:
 
     - name: Generate Bindings
       shell: bash
+      env:
+        GITHUB_OS: ${{ matrix.os }}
       run: |
         cd ./generator
-        bash ./generator.sh
+        if [ "$GITHUB_OS" == "windows-latest" ];
+        then
+          chmod +x generator_windows.bat
+        else
+          bash ./generator_unix.sh
+        fi
 
     - name: CMake
       run: |
         mkdir cmake-build
         cd cmake-build
-        cmake -DCIMGUI_TEST=1 ..
+        if [ "$GITHUB_OS" == "windows-latest" ];
+        then
+          cmake -DCIMGUI_TEST=1 .. -DCMAKE_TOOLCHAIN_FILE=/C/vcpkg/scripts/buildsystems/vcpkg.cmake
+        else
+          cmake -DCIMGUI_TEST=1 ..
+        fi
 
     - name: Build
       working-directory: cmake-build

@@ -22,8 +22,8 @@
 # ref: https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 POSITIONAL_ARGS=()
 
-TARGETS="internal noimstrv"
-CFLAGS="glfw opengl3 opengl2 sdl2"
+TARGETS="internal noimstrv comments"
+CFLAGS="glfw sdl2 sdlrenderer2 vulkan opengl2 opengl3"
 
 help() {
         cat <<EOF
