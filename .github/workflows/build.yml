@@ -69,12 +69,14 @@ jobs:
 
     - name: CMake
       shell: bash
+      env:
+        VCPKG_INSTALLATION_ROOT: ${{ VCPKG_INSTALLATION_ROOT }}
       run: |
         mkdir cmake-build
         cd cmake-build
         if [ "$GITHUB_OS" == "windows-latest" ];
         then
-          cmake -DCIMGUI_TEST=1 .. -DCMAKE_TOOLCHAIN_FILE=/C/vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake -DCIMGUI_TEST=1 .. -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/vcpkg/scripts/buildsystems/vcpkg.cmake
         else
           cmake -DCIMGUI_TEST=1 ..
         fi
