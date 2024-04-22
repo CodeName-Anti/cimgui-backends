@@ -17,6 +17,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Prepare Vulkan SDK
+      uses: humbletim/setup-vulkan-sdk@v1.2.0
+      with:
+        vulkan-query-version: latest
+        vulkan-components: Vulkan-Headers, Vulkan-Loader
+        vulkan-use-cache: true
+
     - name: Install Dependencies
       shell: bash
       env:
@@ -24,13 +31,13 @@ jobs:
       run: |
         if [ "$GITHUB_OS" == "macOS-latest" ];
         then
-          brew install luajit sdl2 glfw vulkan-headers
+          brew install luajit sdl2 glfw
         elif [ "$GITHUB_OS" == "ubuntu-latest" ];
         then
-          sudo apt-get install -y luajit libsdl2-dev libglfw3-dev libvulkan-dev
+          sudo apt-get install -y luajit libsdl2-dev libglfw3-dev 
         elif [ "$GITHUB_OS" == "windows-latest" ];
         then
-          vcpkg install luajit:x64-windows sdl2:x64-windows glfw3:x64-windows vulkan:x64-windows
+          vcpkg install luajit:x64-windows sdl2:x64-windows glfw3:x64-windows
           echo "/C/vcpkg/installed/x64-windows/tools/luajit" >> $GITHUB_PATH
           echo "/C/vcpkg/installed/x64-windows/bin"   >> $GITHUB_PATH
         fi
