@@ -69,6 +69,8 @@ jobs:
 
     - name: CMake
       shell: bash
+      env:
+        GITHUB_OS: ${{ matrix.os }}
       run: |
         mkdir cmake-build
         cd cmake-build
