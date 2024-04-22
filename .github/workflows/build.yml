@@ -24,14 +24,6 @@ jobs:
         vulkan-components: Vulkan-Headers, Vulkan-Loader
         vulkan-use-cache: true
 
-    - name: Install SDL2
-      uses: libsdl-org/setup-sdl@main
-      id: sdl
-      with:
-        install-linux-dependencies: true
-        version: 2-latest
-        version-sdl-image: 2-latest
-
     - name: Install Dependencies
       shell: bash
       env:
